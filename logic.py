@@ -102,20 +102,27 @@ def run_ai_prediction(model, features):
     return {"plant": plant, "disease": disease}, confidence
 
 def run_quantum_verification(gray_image, use_hardware=False, ibm_token=None):
-    # Normalize grayscale to create a quantum input
+    # Normalize grayscale to create a quantum input (0 to 1)
+    # Using the standard deviation and mean to capture texture
     mean_val = np.mean(gray_image) / 255.0
+    std_val = np.std(gray_image) / 255.0
     
     # Simple Plant-Health Quantum Circuit
-    qc = QuantumCircuit(2, 2)
+    # We use 3 qubits to represent a small state space of healthy/unhealthy patterns
+    qc = QuantumCircuit(3, 3)
     
-    # Encode state: If image is bright (potentially healthy/reflective), set qubit
-    if mean_val > 0.5:
-        qc.x(0)
+    # Amplitude Encoding (Simplified): 
+    # Use rotation gates to map image properties to qubit states
+    qc.ry(mean_val * np.pi, 0) # Phase based on brightness
+    qc.ry(std_val * np.pi, 1)  # Phase based on texture
     
-    # Quantum superposition to find nuanced patterns (simulated)
-    qc.h(0)
-    qc.cx(0, 1)
-    qc.measure([0, 1], [0, 1])
+    # Entanglement to check for correlated anomalies
+    qc.h(2)
+    qc.cx(0, 2)
+    qc.cx(1, 2)
+    
+    # Measurement
+    qc.measure([0, 1, 2], [0, 1, 2])
     
     if use_hardware and ibm_token:
         try:
