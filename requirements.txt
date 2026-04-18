@@ -1,5 +1,9 @@
-flask
-flask-cors
+streamlit
+opencv-python-headless
 numpy
+joblib
+qiskit
+qiskit-ibm-runtime
+qiskit-aer
+scikit-learn
 pillow
-tensorflow
